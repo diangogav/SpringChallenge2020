@@ -1,4 +1,6 @@
 import { DIRECTION } from "./DIRECTION";
+import { Movements } from "./Movements";
+import { COORDINATES } from "./COORDINATES";
 
 export class Point {
   public readonly x: number;
@@ -28,5 +30,19 @@ export class Point {
     } else {
       return null;
     }
+  }
+
+  coordinates(): COORDINATES {
+    const up = new Point(this.x, this.y - 1);
+    const down = new Point(this.x, this.y + 1);
+    const right = new Point(this.x + 1, this.y);
+    const left = new Point(this.x - 1, this.y);
+
+    return {
+      up,
+      down,
+      right,
+      left
+    };
   }
 }

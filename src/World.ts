@@ -3,6 +3,8 @@ import { Player } from "./Player";
 import { Enemy } from "./Enemy";
 import { Target } from "./Target";
 import { Point } from "./Point";
+import { Cell } from "./Cell";
+import { Movements } from "./Movements";
 
 export class World {
   private pellets: Pellet[];
@@ -11,6 +13,7 @@ export class World {
   private pelletsCount: number = 0;
   private nearestBigPellets: Target[] = [];
   private nearestSmallPellets: Target[] = [];
+  private cells: Cell[] = [];
 
   constructor() {}
 
@@ -21,6 +24,15 @@ export class World {
     this.pelletsCount = 0;
     this.nearestBigPellets = [];
     this.nearestSmallPellets = [];
+    this.cells = [];
+  }
+
+  loadCells(cells: Cell[]) {
+    this.cells = cells;
+  }
+
+  getCells() {
+    return this.cells;
   }
 
   getPelletsSmallCount() {
@@ -48,7 +60,6 @@ export class World {
   }
 
   getSmallPellets() {
-    console.error("small pellets count", [...this.pellets].filter(pellet => pellet.value != 10).length);
     return [...this.pellets].filter(pellet => pellet.value != 10);
   }
 
@@ -80,5 +91,24 @@ export class World {
     this.nearestSmallPellets = this.nearestSmallPellets.filter(
       pellet => pellet.pos.x !== pos.x && pellet.pos.y !== pos.y
     );
+  }
+
+  getCoordinatesCells(origen: Point): Movements {
+    const { up, down, left, right } = origen.coordinates();
+    const uppCell = this.cells.find(cell => cell.pos.equalTo(up));
+    const downCell = this.cells.find(cell => cell.pos.equalTo(down));
+    const rightCell = this.cells.find(cell => cell.pos.equalTo(right));
+    const leftCell = this.cells.find(cell => cell.pos.equalTo(left));
+
+    console.error(uppCell);
+    console.error(downCell);
+    console.error(rightCell);
+    console.error(leftCell);
+    return {
+      up: uppCell,
+      down: downCell,
+      left: leftCell,
+      rigth: rightCell
+    };
   }
 }

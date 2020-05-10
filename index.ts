@@ -12,12 +12,11 @@ declare function readline(): string;
 var inputs: string[] = readline().split(" ");
 const width: number = parseInt(inputs[0]); // size of the grid
 const height: number = parseInt(inputs[1]); // top left corner is (x=0, y=0)
-for (let i = 0; i < height; i++) {
-  const row: string = readline(); // one line of the grid: space " " is floor, pound "#" is wall
-}
 
 const loadManager = new LoadManager();
 const world = new World();
+const cells = loadManager.paintMap(height);
+
 let { players, enemies } = loadManager.initPacs();
 
 // game loop
@@ -34,6 +33,8 @@ while (true) {
   const pellets = loadManager.loadPellets(visiblePelletCount);
 
   world.clear();
+  world.loadCells(cells);
+
   players = [...currentPlayers];
   enemies = [...currentEnemies];
 

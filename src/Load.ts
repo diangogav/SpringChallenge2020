@@ -3,6 +3,7 @@ import { Enemy } from "./Enemy";
 import { Point } from "./Point";
 import { Pellet } from "./Pellet";
 import { World } from "./World";
+import { Cell } from "./Cell";
 export class LoadManager {
   initPacs() {
     const players: Player[] = [
@@ -70,5 +71,18 @@ export class LoadManager {
       pellets.push(pellet);
     }
     return pellets;
+  }
+
+  paintMap(height: number): Cell[] {
+    const cells: Cell[] = [];
+    for (let y = 0; y < height; y++) {
+      const row: string = readline(); // one line of the grid: space " " is floor, pound "#" is wall
+      row.split("").forEach((element, x) => {
+        const isFree = element == "#" ? false : true;
+        const cell = new Cell(new Point(x, y), isFree);
+        cells.push(cell);
+      });
+    }
+    return cells;
   }
 }

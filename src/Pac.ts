@@ -2,6 +2,7 @@ import { Point } from "./Point";
 import { World } from "./World";
 import { Target } from "./Target";
 import { DIRECTION } from "./DIRECTION";
+import { Movements } from "./Movements";
 export class Pac {
   public readonly id: number;
   private world: World;
@@ -36,6 +37,10 @@ export class Pac {
     if (typeId) this.typeId = typeId;
     if (speedTurnsLeft) this.speedTurnsLeft = speedTurnsLeft;
     if (abilityCooldown) this.abilityCooldown = abilityCooldown;
+  }
+
+  public calculateMovements(): Movements {
+    return this.world.getCoordinatesCells(this.pos);
   }
 
   public getDirection() {

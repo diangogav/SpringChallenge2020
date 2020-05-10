@@ -20,6 +20,8 @@ export abstract class PlayerState {
   public compute() {
     if (this.player.isFrozen()) {
       console.error("Pac", this.player.id, "is frozen at", this.player.getPos());
+      const movements = this.player.calculateMovements();
+      console.error(movements);
     }
 
     const nearestBigPellets = this.player.getWorld().getNearestBigPellets();
