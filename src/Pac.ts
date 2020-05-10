@@ -1,6 +1,7 @@
 import { Point } from "./Point";
 import { World } from "./World";
 import { Target } from "./Target";
+import { DIRECTION } from "./DIRECTION";
 export class Pac {
   public readonly id: number;
   private world: World;
@@ -12,6 +13,7 @@ export class Pac {
   private distanceToBigPellets = {};
   private distanceToSmallPellets = {};
   private smallPelletTarget: Target;
+  private direction: DIRECTION;
 
   constructor({
     id,
@@ -36,6 +38,10 @@ export class Pac {
     if (abilityCooldown) this.abilityCooldown = abilityCooldown;
   }
 
+  public getDirection() {
+    return this.direction;
+  }
+
   public init() {
     this.distanceToBigPellets = {};
     this.distanceToSmallPellets = {};
@@ -46,6 +52,22 @@ export class Pac {
       this.previousPosition = new Point(this.pos.x, this.pos.y);
     }
     this.pos = pos;
+    this.calculateDirection();
+  }
+
+  private calculateDirection() {
+    if (!this.previousPosition) return;
+    const direction = this.pos.directionTo(this.previousPosition);
+    if (direction) this.direction = direction;
+  }
+
+  public getPos(): Point {
+    return this.pos;
+  }
+
+  public isFrozen(): boolean {
+    if (!this.previousPosition) return false;
+    return this.pos.equalTo(this.previousPosition);
   }
 
   public setWorld(world: World) {
@@ -102,7 +124,7 @@ export class Pac {
       .getSmallPellets()
       .find(smallPellet => this.pos.distanceTo(smallPellet.pos) == minDistance);
 
-    console.error("minSmallPellet", minSmallPellet);
+    // console.error("minSmallPellet", minSmallPellet);
 
     if (!minSmallPellet) return;
 

@@ -18,6 +18,10 @@ export abstract class PlayerState {
   }
 
   public compute() {
+    if (this.player.isFrozen()) {
+      console.error("Pac", this.player.id, "is frozen at", this.player.getPos());
+    }
+
     const nearestBigPellets = this.player.getWorld().getNearestBigPellets();
     const bigPelletToSearch = nearestBigPellets.find((pellet: Target) => pellet.playerId == this.player.id);
 
@@ -66,5 +70,17 @@ export class CollectingSmallPellets extends PlayerState {
   execute() {
     if (!this.target) return "";
     return `MOVE ${this.player.id} ${this.target.pos.x} ${this.target.pos.y}`;
+  }
+}
+
+export class Frozen extends PlayerState {
+  public readonly TAG = "CollectingSmallPellets";
+
+  constructor(player: Player) {
+    super(player);
+  }
+
+  execute() {
+    return `MOVE ${this.player.id} ${this.player.getPos().x} ${this.player.getPos().y}`;
   }
 }
