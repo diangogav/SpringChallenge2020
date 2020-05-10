@@ -12,28 +12,50 @@ export abstract class PlayerState {
   public start() {
     const nearestBigPellet: Target = this.player.nearestBigPellet();
     nearestBigPellet && this.player.getWorld().addNearestBigPellet(nearestBigPellet);
+
+    const nearestSmallPellet: Target = this.player.nearestSmallPellet();
+    nearestSmallPellet && this.player.getWorld().addNearestSmallPellet(nearestBigPellet);
   }
 
   public compute() {
     const nearestBigPellets = this.player.getWorld().getNearestBigPellets();
     const bigPelletToSearch = nearestBigPellets.find((pellet: Target) => pellet.playerId == this.player.id);
 
-    if (!bigPelletToSearch) return;
+    if (bigPelletToSearch) {
+      const minorBigPellet = nearestBigPellets
+        .sort((a, b) => a.distance - b.distance)
+        .find(pellet => bigPelletToSearch.pos.x == pellet.pos.x && bigPelletToSearch.pos.y == pellet.pos.y);
 
-    const minorBigPellet = nearestBigPellets
-      .sort((a, b) => a.distance - b.distance)
-      .find(pellet => bigPelletToSearch.pos.x == pellet.pos.x && bigPelletToSearch.pos.y == pellet.pos.y);
+      if (minorBigPellet.playerId == bigPelletToSearch.playerId) {
+        this.player.setState(new SearchingBigPellet(this.player, bigPelletToSearch));
+        return;
+      }
+    }
 
-    console.error("bigPelletToSearch", bigPelletToSearch);
-    console.error("nearestBigPellets", nearestBigPellets);
-    if (minorBigPellet.playerId == bigPelletToSearch.playerId) {
-      this.player.setState(new SearchingBigPellet(this.player, bigPelletToSearch));
+    if (this.player.getSmallPelletTarget()) {
+      this.player.setState(new CollectingSmallPellets(this.player, this.player.getSmallPelletTarget()));
+      return;
     }
   }
 }
 
 export class SearchingBigPellet extends PlayerState {
   public readonly TAG = "SearchingBigPellet";
+  public readonly target: Target;
+
+  constructor(player: Player, target: Target) {
+    super(player);
+    this.target = target;
+  }
+
+  execute() {
+    if (!this.target) return "";
+    return `MOVE ${this.player.id} ${this.target.pos.x} ${this.target.pos.y}`;
+  }
+}
+
+export class CollectingSmallPellets extends PlayerState {
+  public readonly TAG = "CollectingSmallPellets";
   public readonly target: Target;
 
   constructor(player: Player, target: Target) {

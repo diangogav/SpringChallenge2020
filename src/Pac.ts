@@ -10,6 +10,8 @@ export class Pac {
   private abilityCooldown: number;
   private previousPosition: Point;
   private distanceToBigPellets = {};
+  private distanceToSmallPellets = {};
+  private smallPelletTarget: Target;
 
   constructor({
     id,
@@ -36,6 +38,7 @@ export class Pac {
 
   public init() {
     this.distanceToBigPellets = {};
+    this.distanceToSmallPellets = {};
   }
 
   public updatePosition(pos: Point) {
@@ -61,17 +64,19 @@ export class Pac {
     return this.distanceToBigPellets;
   }
 
+  private calculateDistanceToSmallPellets() {
+    this.world.getSmallPellets().forEach((pellet, index) => {
+      this.distanceToSmallPellets[index] = this.pos.distanceTo(pellet.pos);
+    });
+
+    return this.distanceToSmallPellets;
+  }
+
   public nearestBigPellet() {
     this.calculateDistanceToBigPellets();
 
-    // console.error(this.world.getBigPellets());
-    // console.error("this.distanceToBigPellets", this.distanceToBigPellets  );
-    // console.error("calculateDistanceToBigPellets", this.id, this.pos, this.distanceToBigPellets);
     const distances: number[] = Object.values(this.distanceToBigPellets);
     const minDistance = Math.min(...distances);
-
-    // console.error("distances", distances);
-    // console.error("minDistance", minDistance);
 
     const minBigPellet = this.world
       .getBigPellets()
@@ -86,5 +91,33 @@ export class Pac {
     };
 
     return target;
+  }
+
+  public nearestSmallPellet() {
+    this.calculateDistanceToSmallPellets();
+    const distances: number[] = Object.values(this.distanceToSmallPellets);
+    const minDistance = Math.min(...distances);
+
+    const minSmallPellet = this.world
+      .getSmallPellets()
+      .find(smallPellet => this.pos.distanceTo(smallPellet.pos) == minDistance);
+
+    console.error("minSmallPellet", minSmallPellet);
+
+    if (!minSmallPellet) return;
+
+    const target: Target = {
+      pos: minSmallPellet.pos,
+      distance: minDistance,
+      playerId: this.id
+    };
+
+    this.smallPelletTarget = target;
+
+    return target;
+  }
+
+  getSmallPelletTarget(): Target {
+    return this.smallPelletTarget;
   }
 }

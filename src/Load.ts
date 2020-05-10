@@ -46,6 +46,7 @@ export class LoadManager {
           player.updatePosition(new Point(x, y));
           player.setWorld(world);
           player.init();
+          console.error(player.id, player.getState().TAG);
           currentPlayers.push(player);
         }
       }
@@ -59,6 +60,7 @@ export class LoadManager {
 
   loadPellets(visiblePelletCount: number) {
     const pellets: Pellet[] = [];
+    console.error("visiblePelletCount", visiblePelletCount);
     for (let i = 0; i < visiblePelletCount; i++) {
       var inputs: string[] = readline().split(" ");
       const x: number = parseInt(inputs[0]);
@@ -67,6 +69,7 @@ export class LoadManager {
       const pellet = new Pellet(new Point(x, y), value);
       pellets.push(pellet);
     }
+    console.error("pellets", pellets);
     return pellets;
   }
 }
