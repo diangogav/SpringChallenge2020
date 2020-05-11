@@ -1,7 +1,8 @@
 import { Cell } from "./Cell";
+import { DIRECTION } from "./DIRECTION";
 export interface Movements {
-  up: Cell;
-  down: Cell;
-  rigth: Cell;
-  left: Cell;
+  [DIRECTION.UP]: Cell;
+  [DIRECTION.DOWN]: Cell;
+  [DIRECTION.RIGHT]: Cell;
+  [DIRECTION.LEFT]: Cell;
 }

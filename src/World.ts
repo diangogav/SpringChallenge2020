@@ -5,6 +5,7 @@ import { Target } from "./Target";
 import { Point } from "./Point";
 import { Cell } from "./Cell";
 import { Movements } from "./Movements";
+import { DIRECTION } from "./DIRECTION";
 
 export class World {
   private pellets: Pellet[];
@@ -105,10 +106,10 @@ export class World {
     console.error(rightCell);
     console.error(leftCell);
     return {
-      up: uppCell,
-      down: downCell,
-      left: leftCell,
-      rigth: rightCell
+      [DIRECTION.UP]: uppCell,
+      [DIRECTION.DOWN]: downCell,
+      [DIRECTION.LEFT]: leftCell,
+      [DIRECTION.RIGHT]: rightCell
     };
   }
 }
