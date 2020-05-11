@@ -3,11 +3,15 @@ import { World } from "./World";
 import { Target } from "./Target";
 import { DIRECTION } from "./DIRECTION";
 import { Movements } from "./Movements";
+import { FIGHTER, FIGHTER_TYPES } from "./FIGHTER";
+import { Rock } from "./Rock";
+import { Paper } from "./Paper";
+import { Scissors } from "./Scissors";
 export class Pac {
   public readonly id: number;
   private world: World;
   private pos: Point;
-  private typeId: string;
+  protected typeId: string;
   private speedTurnsLeft: number;
   private abilityCooldown: number;
   private previousPosition: Point;
@@ -15,6 +19,7 @@ export class Pac {
   private distanceToSmallPellets = {};
   private smallPelletTarget: Target;
   private direction: DIRECTION;
+  private fighterMode: FIGHTER;
 
   constructor({
     id,
@@ -34,12 +39,14 @@ export class Pac {
     this.id = id;
     if (world) this.world = world;
     if (pos) this.pos = pos;
-    if (typeId) this.typeId = typeId;
+    if (typeId) {
+      this.createFighter(<FIGHTER_TYPES>typeId);
+    }
     if (speedTurnsLeft) this.speedTurnsLeft = speedTurnsLeft;
     if (abilityCooldown) this.abilityCooldown = abilityCooldown;
   }
 
-  public calculateMovements(): Movements {
+  public calculateMovements(): Movements[] {
     return this.world.getCoordinatesCells(this.pos);
   }
 
@@ -70,7 +77,7 @@ export class Pac {
     return this.pos;
   }
 
-  public isFrozen(): boolean {
+  public collided(): boolean {
     if (!this.previousPosition) return false;
     return this.pos.equalTo(this.previousPosition);
   }
@@ -131,7 +138,10 @@ export class Pac {
 
     // console.error("minSmallPellet", minSmallPellet);
 
-    if (!minSmallPellet) return;
+    if (!minSmallPellet) {
+      this.smallPelletTarget = null;
+      return;
+    }
 
     const target: Target = {
       pos: minSmallPellet.pos,
@@ -146,5 +156,33 @@ export class Pac {
 
   getSmallPelletTarget(): Target {
     return this.smallPelletTarget;
+  }
+
+  createFighter(typeId: FIGHTER_TYPES) {
+    this.typeId = typeId;
+
+    if (typeId == FIGHTER_TYPES.ROCK) {
+      this.fighterMode = new Rock();
+    } else if (typeId == FIGHTER_TYPES.PAPER) {
+      this.fighterMode = new Paper();
+    } else if (typeId == FIGHTER_TYPES.SCISSORS) {
+      this.fighterMode = new Scissors();
+    }
+  }
+
+  toPlayerMode() {
+    return this.fighterMode;
+  }
+
+  getType(): FIGHTER_TYPES {
+    return <FIGHTER_TYPES>this.typeId;
+  }
+
+  setAbilityCountdown(count: number) {
+    this.abilityCooldown = count;
+  }
+
+  canExecuteHability() {
+    return this.abilityCooldown == 0;
   }
 }

@@ -10,6 +10,6 @@ export class SearchingBigPellet extends PlayerState {
   }
   execute() {
     if (!this.target) return "";
-    return `MOVE ${this.player.id} ${this.target.pos.x} ${this.target.pos.y}`;
+    return [`MOVE ${this.player.id} ${this.target.pos.x} ${this.target.pos.y}`];
   }
 }

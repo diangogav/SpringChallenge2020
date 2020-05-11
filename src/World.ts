@@ -94,22 +94,58 @@ export class World {
     );
   }
 
-  getCoordinatesCells(origen: Point): Movements {
+  getCoordinatesCells(origen: Point): Movements[] {
     const { up, down, left, right } = origen.coordinates();
     const uppCell = this.cells.find(cell => cell.pos.equalTo(up));
+    const uppCell2 = this.cells.find(cell => cell.pos.equalTo(new Point(up.x, up.y - 1)));
     const downCell = this.cells.find(cell => cell.pos.equalTo(down));
+    const downCell2 = this.cells.find(cell => cell.pos.equalTo(new Point(down.x, down.y - 1)));
     const rightCell = this.cells.find(cell => cell.pos.equalTo(right));
+    const rightCell2 = this.cells.find(cell => cell.pos.equalTo(new Point(right.x + 1, right.y)));
     const leftCell = this.cells.find(cell => cell.pos.equalTo(left));
+    const leftCell2 = this.cells.find(cell => cell.pos.equalTo(new Point(left.x - 1, left.y)));
 
-    console.error(uppCell);
-    console.error(downCell);
-    console.error(rightCell);
-    console.error(leftCell);
-    return {
-      [DIRECTION.UP]: uppCell,
-      [DIRECTION.DOWN]: downCell,
-      [DIRECTION.LEFT]: leftCell,
-      [DIRECTION.RIGHT]: rightCell
-    };
+    return [
+      {
+        cell: uppCell,
+        direction: DIRECTION.UP
+      },
+      {
+        cell: downCell,
+        direction: DIRECTION.DOWN
+      },
+      {
+        cell: leftCell,
+        direction: DIRECTION.LEFT
+      },
+      {
+        cell: rightCell,
+        direction: DIRECTION.RIGHT
+      },
+      {
+        cell: uppCell2,
+        direction: DIRECTION.UP
+      },
+      {
+        cell: downCell2,
+        direction: DIRECTION.DOWN
+      },
+      {
+        cell: leftCell2,
+        direction: DIRECTION.LEFT
+      },
+      {
+        cell: rightCell2,
+        direction: DIRECTION.RIGHT
+      }
+    ].filter(movement => movement.cell != null && movement.cell != null);
+  }
+
+  clearCells() {
+    this.cells.forEach(cell => {
+      if (cell.haveEnemy()) {
+        cell.clearEnemy();
+      }
+    });
   }
 }

@@ -4,6 +4,7 @@ import { Point } from "./Point";
 import { Pellet } from "./Pellet";
 import { World } from "./World";
 import { Cell } from "./Cell";
+import { FIGHTER_TYPES } from "./FIGHTER";
 export class LoadManager {
   initPacs() {
     const players: Player[] = [
@@ -13,21 +14,13 @@ export class LoadManager {
       new Player({ id: 3 }),
       new Player({ id: 4 })
     ];
-    const enemies: Enemy[] = [
-      new Enemy({ id: 0 }),
-      new Enemy({ id: 1 }),
-      new Enemy({ id: 2 }),
-      new Enemy({ id: 3 }),
-      new Enemy({ id: 4 })
-    ];
 
     return {
-      players,
-      enemies
+      players
     };
   }
 
-  loadPlayers(visiblePacCount: number, players: Player[], enemies: Enemy[], world: World) {
+  loadPlayers(visiblePacCount: number, players: Player[], world: World) {
     const currentPlayers: Player[] = [];
     const currentEnemies: Enemy[] = [];
 
@@ -46,11 +39,32 @@ export class LoadManager {
         if (player) {
           player.updatePosition(new Point(x, y));
           player.setWorld(world);
+          player.createFighter(<FIGHTER_TYPES>typeId);
+          player.setAbilityCountdown(abilityCooldown);
           player.init();
-          console.error("ID: ", player.id, "STATE: ", player.getState().TAG);
-          console.error("ID: ", player.id, "DIRECTION: ", player.getDirection());
+          const cellToClean = world.getCells().find(cell => x == cell.pos.x && y == cell.pos.y);
+
+          if (cellToClean) {
+            cellToClean.clean();
+          }
+
+          // console.error("ID: ", player.id, "STATE: ", player.getState().TAG);
+          // // console.error("ID: ", player.id, "POS: ", player.getPos());
+          // // console.error("ID: ", player.id, "DIRECTION: ", player.getDirection());
           currentPlayers.push(player);
         }
+      } else {
+        const enemy = new Enemy({ id: pacId, pos: new Point(x, y), typeId });
+        const markCellAsEnemy = world.getCells().find(cell => x == cell.pos.x && y == cell.pos.y);
+
+        // console.error("enemy", x, y);
+        if (markCellAsEnemy) {
+          markCellAsEnemy.setEnemy(enemy);
+          markCellAsEnemy.clean();
+        }
+        // console.error("markCellAsEnemy", markCellAsEnemy);
+
+        currentEnemies.push(enemy);
       }
     }
 

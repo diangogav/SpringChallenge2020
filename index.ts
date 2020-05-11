@@ -17,7 +17,7 @@ const loadManager = new LoadManager();
 const world = new World();
 const cells = loadManager.paintMap(height);
 
-let { players, enemies } = loadManager.initPacs();
+let { players } = loadManager.initPacs();
 
 // game loop
 while (true) {
@@ -26,7 +26,7 @@ while (true) {
   const opponentScore: number = parseInt(inputs[1]);
   const visiblePacCount: number = parseInt(readline()); // all your pacs and enemy pacs in sight
 
-  const { currentEnemies, currentPlayers } = loadManager.loadPlayers(visiblePacCount, players, enemies, world);
+  const { currentEnemies, currentPlayers } = loadManager.loadPlayers(visiblePacCount, players, world);
 
   const visiblePelletCount: number = parseInt(readline()); // all pellets in sight
 
@@ -36,7 +36,6 @@ while (true) {
   world.loadCells(cells);
 
   players = [...currentPlayers];
-  enemies = [...currentEnemies];
 
   world.setPellets([...pellets]);
   world.setPlayers([...currentPlayers]);
@@ -53,6 +52,8 @@ while (true) {
     .getPlayers()
     .map(player => player.getState().execute())
     .join("|");
+
+  world.clearCells();
 
   // Write an action using console.log()
   // To debug: console.error('Debug messages...');

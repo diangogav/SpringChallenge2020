@@ -6,6 +6,7 @@ import { COMMAND } from "./COMMAND";
 
 export class Player extends Pac {
   private state: PlayerState = new SearchingBigPellet(this, null);
+
   constructor({
     id,
     pos,
