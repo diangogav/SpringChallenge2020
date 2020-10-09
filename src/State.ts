@@ -40,12 +40,6 @@ export abstract class PlayerState {
       return;
     }
 
-    // if (this.player.collided()) {
-    // //   console.error("Pac", this.player.id, "is frozen at", this.player.getPos());
-    //   const movements = this.player.calculateMovements();
-    // //   console.error(movements);
-    // }
-
     const nearestBigPellets = this.player.getWorld().getNearestBigPellets();
     const bigPelletToSearch = nearestBigPellets.find((pellet: Target) => pellet.playerId == this.player.id);
 
@@ -144,8 +138,6 @@ export class Collided extends PlayerState {
   execute() {
     const forwardCell: Cell = this.movements[this.player.getDirection()];
     const isEnemy = forwardCell.haveEnemy();
-    // console.error("isEnemy", isEnemy);
-    // console.error("forwardCell", forwardCell);
 
     return `MOVE ${this.player.id} ${this.player.getPos().x} ${this.player.getPos().y}`;
   }
